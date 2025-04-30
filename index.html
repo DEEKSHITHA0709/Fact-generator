@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactSpark - AI Random Facts Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 50%, #3b3b6a 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(30, 30, 50, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            margin-bottom: 28px;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: #a0a0c0;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .header a:hover {
+            color: #6c63ff;
+        }
+
+        .header .free-tag {
+            display: inline-block;
+            background: linear-gradient(90deg, #6c63ff, #8a85ff);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            margin-top: 16px;
+            font-weight: 600;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-output {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 40px;
+        }
+
+        .input-section, .output-section {
+            background: rgba(40, 40, 60, 0.7);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-section:hover, .output-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.2);
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #d0d0e0;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 1rem;
+            color: #e0e0e0;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: #6c63ff;
+            box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button.generate-btn {
+            background: linear-gradient(90deg, #6c63ff, #8a85ff);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        button.generate-btn:hover {
+            background: linear-gradient(90deg, #5a54d9, #7872e6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+        }
+
+        button.generate-btn:disabled {
+            background: #4a4a6a;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .output-section {
+            position: relative;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #output {
+            flex-grow: 1;
+            text-align: left;
+            font-size: 1rem;
+            color: #e0e0e0;
+            line-height: 1.7;
+        }
+
+        #output p {
+            margin-bottom: 14px;
+        }
+
+        #output .error {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #d0d0e0;
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .copy-btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: #6a6a8a;
+            cursor: not-allowed;
+        }
+
+        .给定: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            color: #a0a0c0;
+            font-weight: 500;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid #6c63ff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .input-output {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            button.generate-btn, .copy-btn {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="#">AI Tools > FactSpark Generator</a>
+            <div class="free-tag">Free Tool. No Login Required</div>
+        </div>
+        <h1>FactSpark - AI Random Facts</h1>
+        <p class="subtitle">Uncover fascinating facts with our AI-powered generator. Customize your experience and spark curiosity!</p>
+        <div class="input-output">
+            <div class="input-section">
+                <label for="contextInput">Context (e.g., 'animals', 'space')</label>
+                <textarea id="contextInput" placeholder="Enter a topic for specific facts"></textarea>
+                <label for="languageSelect">Language</label>
+                <select id="languageSelect">
+                    <option value="English">Telugu</option>
+                    <option value="Spanish">English</option>
+                    <option value="French">Hindi</option>
+                </select>
+                <label for="optionsSelect">Number of Facts</label>
+                <select id="optionsSelect">
+                    <option value="3">3 Facts</option>
+                    <option value="5" selected>5 Facts</option>
+                    <option value="10">10 Facts</option>
+                </select>
+                <button class="generate-btn" onclick="generateFacts()">Generate Facts</button>
+            </div>
+            <div class="output-section">
+                <div id="output"></div>
+                <div class="loading" id="loading">Loading...</div>
+                <button class="copy-btn" onclick="copyToClipboard()" disabled>Copy Facts</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isGenerating = false;
+
+        async function generateFacts() {
+            if (isGenerating) return;
+
+            const contextInput = document.getElementById('contextInput');
+            const language = document.getElementById('languageSelect').value;
+            const options = parseInt(document.getElementById('optionsSelect').value);
+            const outputDiv = document.getElementById('output');
+            const loadingDiv = document.getElementById('loading');
+            const generateBtn = document.querySelector('.generate-btn');
+            const copyBtn = document.querySelector('.copy-btn');
+
+            // Validate input
+            if (options < 1 || options > 10) {
+                outputDiv.innerHTML = '<p class="error">Please select a valid number of facts.</p>';
+                return;
+            }
+
+            // Show loading state
+            isGenerating = true;
+            generateBtn.disabled = true;
+            copyBtn.disabled = true;
+            outputDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:5000/generate-facts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        context: contextInput.value.trim(),
+                        language,
+                        options
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    outputDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                } else {
+                    outputDiv.innerHTML = data.facts.map(fact => `<p>${fact}</p>`).join('');
+                    copyBtn.disabled = false;
+                }
+            } catch (error) {
+                outputDiv.innerHTML = `<p class="error">Error: Could not connect to the server. Please ensure it's running at http://localhost:5000.</p>`;
+            } finally {
+                isGenerating = false;
+                generateBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('output').innerText;
+            if (!output) {
+                alert('No facts to copy!');
+                return;
+            }
+
+            navigator.clipboard.writeText(output).then(() => {
+                alert('Facts copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        // Trigger generate on Enter key in textarea
+        document.getElementById('contextInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generateFacts();
+            }
+        });
+    </script>
+</body>
+</html>
